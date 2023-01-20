@@ -3,10 +3,15 @@ export interface IGameData {
   currentIndex: number;
   isFinished: boolean;
   isWinner: boolean;
-  activeUser: number;
   shouldSwitchUser: boolean;
-  user1: number[];
-  user2: number[];
-  user1Collected: number;
-  user2Collected: number;
+  user1: IUserData;
+  user2: IUserData;
+  shouldGrabOpposite: boolean;
+  grabIndex: number;
+}
+
+export interface IUserData {
+  isActive: boolean;
+  collected: number;
+  items: number[];
 }

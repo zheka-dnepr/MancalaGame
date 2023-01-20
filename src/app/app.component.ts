@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { GameService } from './game.service';
-import { IGameData } from './common';
+import { IGameData, IUserData } from './common';
 
 @Component({
   selector: 'app-root',
@@ -15,11 +15,7 @@ export class AppComponent {
     public gameService: GameService
   ) {}
 
-  public clickUser1Item(index: number): void {
-    this.gameData = this.gameService.clickUser1Item(index);
-  }
-
-  public clickUser2Item(index: number): void {
-    this.gameData = this.gameService.clickUser2Item(index);
+  public clickUserItem(index: number, activeUser: IUserData, nonActiveUser: IUserData): void {
+    this.gameData = this.gameService.clickUserItem(index, activeUser, nonActiveUser);
   }
 }
