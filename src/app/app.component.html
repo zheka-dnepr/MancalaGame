@@ -1,31 +1,31 @@
 <div class="text-section">
-  <p *ngIf="gameData.activeUser === 2">Opposite user Turn</p>
+  <p *ngIf="gameData.user2.isActive">Opposite user Turn</p>
 </div>
 
 <section class="game-section" [ngClass]="{ 'game-section--disabled': gameData.isFinished}">
-  <div class="user2-collected">{{ gameData.user2Collected }}</div>
+  <div class="user2-collected">{{ gameData.user2.collected }}</div>
   <div class="items-section">
     <div class="items">
-      <ng-container *ngFor="let item of gameData.user2; let i = index">
-        <div class="item" [ngClass]="{'item--active': gameData.activeUser === 2, 'item--hover': item > 0}"
-             (click)="clickUser2Item(i)"> {{ item }} </div>
+      <ng-container *ngFor="let item of gameData.user2.items; let i = index">
+        <div class="item" [ngClass]="{'item--active': gameData.user2.isActive, 'item--hover': item > 0}"
+             (click)="clickUserItem(i, gameData.user2, gameData.user1)"> {{ item }} </div>
       </ng-container>
     </div>
     <div class="items">
-      <ng-container *ngFor="let item of gameData.user1; let i = index">
+      <ng-container *ngFor="let item of gameData.user1.items; let i = index">
         <div class="item" [ngClass]="{
-        'item--active': gameData.activeUser === 1,
-        'item--hover': gameData.user1[gameData.user1.length-i-1] > 0}"
-             (click)="clickUser1Item(gameData.user1.length-i-1)">
-          {{ gameData.user1[gameData.user1.length-i-1] }} </div>
+        'item--active': gameData.user1.isActive,
+        'item--hover': gameData.user1.items[gameData.user1.items.length-i-1] > 0}"
+             (click)="clickUserItem(gameData.user1.items.length-i-1, gameData.user1, gameData.user2)">
+          {{ gameData.user1.items[gameData.user1.items.length-i-1] }} </div>
       </ng-container>
     </div>
   </div>
-  <div class="user1-collected">{{ gameData.user1Collected }}</div>
+  <div class="user1-collected">{{ gameData.user1.collected }}</div>
 </section>
 
 <div class="text-section">
-  <p *ngIf="gameData.activeUser === 1">Your Turn</p>
+  <p *ngIf="gameData.user1.isActive">Your Turn</p>
   <ng-template [ngIf]="gameData.isFinished">
     <p *ngIf="gameData.isWinner">You are winner</p>
     <p *ngIf="!gameData.isWinner">You are loser</p>

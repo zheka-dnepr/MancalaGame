@@ -1,45 +1,49 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { GameService } from './game.service';
+import { DefaultGameData, IGameData } from './common';
 
 describe('AppComponent', () => {
-  const data = {
-    currentValue: 0,
-    currentIndex: 0,
-    isFinished: false,
-    isWinner: false,
-    activeUser: 1,
-    shouldSwitchUser: false,
-    user1: [4, 4, 4, 4, 4, 4],
-    user2: [4, 4, 4, 4, 4, 4],
-    user1Collected: 0,
-    user2Collected: 0
-  };
+  const data: IGameData = DefaultGameData;
 
-  const dataAfterFirstUserClick = {
-    currentValue: 0,
-    currentIndex: 3,
-    isFinished: false,
-    isWinner: false,
-    activeUser: 1,
-    shouldSwitchUser: false,
-    user1: [5, 5, 5, 0, 4, 4],
-    user2: [4, 4, 4, 4, 4, 4],
-    user1Collected: 1,
-    user2Collected: 0
-  };
-
-  const dataAfterSecondUserClick = {
+  const dataAfterFirstUserClick: IGameData = {
     currentValue: 0,
     currentIndex: 2,
     isFinished: false,
     isWinner: false,
-    activeUser: 1,
     shouldSwitchUser: false,
-    user1: [4, 5, 5, 5, 5, 1],
-    user2: [5, 5, 0, 4, 4, 4],
-    user1Collected: 0,
-    user2Collected: 1
+    user1: {
+      collected: 1,
+      items: [5, 5, 0, 4, 4, 4],
+      isActive: false
+    },
+    user2: {
+      collected: 0,
+      items: [4, 4, 4, 4, 4, 5],
+      isActive: true
+    },
+    shouldGrabOpposite: false,
+    grabIndex: 0
+  };
+
+  const dataAfterSecondUserClick: IGameData = {
+    currentValue: 0,
+    currentIndex: 1,
+    isFinished: false,
+    isWinner: false,
+    shouldSwitchUser: false,
+    user1: {
+      collected: 1,
+      items: [5, 5, 0, 4, 5, 5],
+      isActive: true
+    },
+    user2: {
+      collected: 1,
+      items: [5, 0, 4, 4, 4, 5],
+      isActive: false
+    },
+    shouldGrabOpposite: false,
+    grabIndex: 0
   };
 
   beforeEach(async () => {
@@ -65,22 +69,15 @@ describe('AppComponent', () => {
     expect(app.gameData).toEqual(data);
   });
 
-  it(`should change gameData after first user click`, () => {
+  it(`should change gameData after user click`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.gameData).toEqual(data);
 
-    app.clickUser1Item(3);
+    app.clickUserItem(2, data.user1, data.user2);
     expect(app.gameData).toEqual(dataAfterFirstUserClick);
-  });
 
-  it(`should change gameData after second user click`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.gameData).toEqual(data);
-
-    app.clickUser1Item(5);
-    app.clickUser2Item(2);
+    app.clickUserItem(1, data.user2, data.user1);
     expect(app.gameData).toEqual(dataAfterSecondUserClick);
   });
 
