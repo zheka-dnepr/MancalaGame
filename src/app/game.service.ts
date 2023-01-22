@@ -7,9 +7,9 @@ import { DefaultGameData, IGameData, IUserData } from './common';
 export class GameService {
   public gameData: IGameData = DefaultGameData;
 
-  public clickUserItem(index: number, activeUser: IUserData, nonActiveUser: IUserData): IGameData {
+  public clickUserItem(index: number, activeUser: IUserData, nonActiveUser: IUserData): void {
     // return if a user is not active or the item has no value
-    if (!activeUser.isActive || !activeUser.items[index]) return this.gameData;
+    if (!activeUser.isActive || !activeUser.items[index]) return;
 
     // set clicked item as current
     this._setCurrentItem(index, activeUser);
@@ -18,14 +18,14 @@ export class GameService {
     activeUser = this._checkFirstRound(activeUser);
 
     // check if you need to grab opposite item
-    // this._grabOpposite(activeUser, nonActiveUser);
+    this._grabOpposite(activeUser, nonActiveUser);
 
     // collect rocks or switch user
     if (this.gameData.currentValue) {
       this._collect(activeUser);
     } else {
       this._checkForSwitchUser(activeUser, nonActiveUser);
-      return this.gameData;
+      return;
     }
 
     if (this.gameData.currentValue) {
@@ -35,20 +35,21 @@ export class GameService {
       // set user items second time
       if (this.gameData.currentValue) {
         activeUser = this._checkSecondRound(activeUser);
+        // check if you need to grab opposite item
+        this._grabOpposite(activeUser, nonActiveUser);
       }
     } else {
       this.gameData.shouldSwitchUser = false;
     }
 
     this._checkForSwitchUser(activeUser, nonActiveUser);
-    this._checkForWin();
-    this._clearData();
-    return this.gameData;
+    return;
   }
 
   private _setCurrentItem(index: number, activeUser: IUserData): void {
     this.gameData.currentIndex = index;
     this.gameData.currentValue = activeUser.items[this.gameData.currentIndex];
+    this.gameData.firstValue = activeUser.items[this.gameData.currentIndex];
     this.gameData.shouldSwitchUser = true;
   }
 
@@ -60,10 +61,7 @@ export class GameService {
         return 0;
       } else if (this.gameData.currentValue && i < this.gameData.currentIndex && i >= add) {
         this.gameData.currentValue--;
-        // console.log('this.gameData.currentValue', this.gameData.currentValue)
-        // console.log('item', item)
-        if (!item && !this.gameData.currentValue) {
-          // console.log('grab')
+        if (!item && !(this.gameData.currentValue + 1 - this.gameData.firstValue)) {
           this.gameData.shouldGrabOpposite = true;
           this.gameData.grabIndex = i;
         }
@@ -97,6 +95,10 @@ export class GameService {
     user.items = user.items.map((item, i) => {
       if (this.gameData.currentValue && i >= secondAdd) {
         this.gameData.currentValue--;
+        if (!item && !(this.gameData.currentValue + 1 - this.gameData.firstValue)) {
+          this.gameData.shouldGrabOpposite = true;
+          this.gameData.grabIndex = i;
+        }
         return item + 1;
       }
       return item;
@@ -106,6 +108,7 @@ export class GameService {
 
   private _grabOpposite(activeUser: IUserData, nonActiveUser: IUserData): void {
     if (this.gameData.shouldGrabOpposite) {
+      this.gameData.shouldGrabOpposite = false;
       activeUser.items[this.gameData.grabIndex] = 0;
       activeUser.collected++;
       let opposite = nonActiveUser.items[nonActiveUser.items.length - this.gameData.grabIndex - 1];
@@ -120,6 +123,7 @@ export class GameService {
       nonActiveUser.isActive = true;
       this.gameData.shouldSwitchUser = false;
     }
+    this._checkForWin();
   }
 
   private _checkForWin(): void {
@@ -139,10 +143,6 @@ export class GameService {
     this.gameData.user2.items = [0, 0, 0, 0, 0, 0];
     this.gameData.user1.isActive = false;
     this.gameData.user2.isActive = false;
-  }
-
-  private _clearData(): void {
-    this.gameData.shouldGrabOpposite = false;
   }
 }
 

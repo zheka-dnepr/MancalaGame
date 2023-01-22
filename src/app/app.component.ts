@@ -16,6 +16,6 @@ export class AppComponent {
   ) {}
 
   public clickUserItem(index: number, activeUser: IUserData, nonActiveUser: IUserData): void {
-    this.gameData = this.gameService.clickUserItem(index, activeUser, nonActiveUser);
+    this.gameService.clickUserItem(index, activeUser, nonActiveUser);
   }
 }

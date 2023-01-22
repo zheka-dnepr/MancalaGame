@@ -8,6 +8,7 @@ describe('AppComponent', () => {
 
   const dataAfterFirstUserClick: IGameData = {
     currentValue: 0,
+    firstValue: 4,
     currentIndex: 2,
     isFinished: false,
     isWinner: false,
@@ -28,6 +29,7 @@ describe('AppComponent', () => {
 
   const dataAfterSecondUserClick: IGameData = {
     currentValue: 0,
+    firstValue: 4,
     currentIndex: 1,
     isFinished: false,
     isWinner: false,

@@ -2,6 +2,7 @@ import { IGameData } from './interfaces';
 
 export const DefaultGameData: IGameData = {
   currentValue: 0,
+  firstValue: 0,
   currentIndex: 0,
   isFinished: false,
   isWinner: false,

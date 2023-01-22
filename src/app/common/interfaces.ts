@@ -1,5 +1,6 @@
 export interface IGameData {
   currentValue: number;
+  firstValue: number;
   currentIndex: number;
   isFinished: boolean;
   isWinner: boolean;
