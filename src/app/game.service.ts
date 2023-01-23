@@ -5,47 +5,51 @@ import { DefaultGameData, IGameData, IUserData } from './common';
   providedIn: 'root',
 })
 export class GameService {
+  /** set data at the start of the game */
   public gameData: IGameData = DefaultGameData;
 
+  /** method fires after user clicks on item */
   public clickUserItem(index: number, activeUser: IUserData, nonActiveUser: IUserData): void {
-    // return if a user is not active or the item has no value
+    /** return if a user is not active or the item has no value */
     if (!activeUser.isActive || !activeUser.items[index]) return;
 
-    // set clicked item as current
+    /** set clicked item as current */
     this._setCurrentItem(index, activeUser);
 
-    // set user items first time
+    /** add stones to your holes first time */
     activeUser = this._checkFirstRound(activeUser);
 
-    // check if you need to grab opposite item
+    /** check if you need to grab opposite stones */
     this._grabOpposite(activeUser, nonActiveUser);
 
-    // collect rocks or switch user
     if (this.gameData.currentValue) {
+      /** collect  stones in the store */
       this._collect(activeUser);
     } else {
+      /** check if you need to switch active player */
       this._checkForSwitchUser(activeUser, nonActiveUser);
       return;
     }
 
     if (this.gameData.currentValue) {
-      // set opposite user items
+      /** add stones to opposite user's holes */
       nonActiveUser = this._checkOppositeUser(nonActiveUser);
 
-      // set user items second time
+      /** add stones to your holes second time */
       if (this.gameData.currentValue) {
         activeUser = this._checkSecondRound(activeUser);
-        // check if you need to grab opposite item
+        /** check if you need to grab opposite stones */
         this._grabOpposite(activeUser, nonActiveUser);
       }
     } else {
       this.gameData.shouldSwitchUser = false;
     }
-
+    /** check if you need to switch active player */
     this._checkForSwitchUser(activeUser, nonActiveUser);
     return;
   }
 
+  /** set clicked item as current */
   private _setCurrentItem(index: number, activeUser: IUserData): void {
     this.gameData.currentIndex = index;
     this.gameData.currentValue = activeUser.items[this.gameData.currentIndex];
@@ -53,6 +57,7 @@ export class GameService {
     this.gameData.shouldSwitchUser = true;
   }
 
+  /** add stones to your holes first time */
   private _checkFirstRound(user: IUserData): IUserData {
     let add = (this.gameData.currentIndex - this.gameData.currentValue) > 0 ?
       (this.gameData.currentIndex - this.gameData.currentValue) : 0;
@@ -72,11 +77,13 @@ export class GameService {
     return user;
   }
 
+  /** collect  stones in the store */
   private _collect(user: IUserData): void {
     user.collected++;
     this.gameData.currentValue--;
   }
 
+  /** add stones to opposite user's holes */
   private _checkOppositeUser(user: IUserData): IUserData {
     user.items = user.items.reverse().map((item) => {
       if (this.gameData.currentValue) {
@@ -89,6 +96,7 @@ export class GameService {
     return user;
   }
 
+  /** add stones to your holes second time */
   private _checkSecondRound(user: IUserData): IUserData {
     let secondAdd = (user.items.length - this.gameData.currentValue) > 0 ?
       (user.items.length - this.gameData.currentValue) : 0;
@@ -106,26 +114,32 @@ export class GameService {
     return user;
   }
 
+  /** check if you need to grab opposite stones */
   private _grabOpposite(activeUser: IUserData, nonActiveUser: IUserData): void {
     if (this.gameData.shouldGrabOpposite) {
       this.gameData.shouldGrabOpposite = false;
-      activeUser.items[this.gameData.grabIndex] = 0;
-      activeUser.collected++;
       let opposite = nonActiveUser.items[nonActiveUser.items.length - this.gameData.grabIndex - 1];
-      activeUser.collected = activeUser.collected + opposite;
-      nonActiveUser.items[nonActiveUser.items.length - this.gameData.grabIndex - 1] = 0;
+      if (opposite) {
+        activeUser.items[this.gameData.grabIndex] = 0;
+        activeUser.collected++;
+        activeUser.collected = activeUser.collected + opposite;
+        nonActiveUser.items[nonActiveUser.items.length - this.gameData.grabIndex - 1] = 0;
+      }
     }
   }
 
+  /** check if you need to switch active player */
   private _checkForSwitchUser(activeUser: IUserData, nonActiveUser: IUserData): void {
     if (this.gameData.shouldSwitchUser) {
       activeUser.isActive = false;
       nonActiveUser.isActive = true;
       this.gameData.shouldSwitchUser = false;
     }
+    /** check if game is finished */
     this._checkForWin();
   }
 
+  /** check if game is finished */
   private _checkForWin(): void {
     let user1RocksCount = this.gameData.user1.items.reduce((a, b) => a + b);
     let user2RocksCount = this.gameData.user2.items.reduce((a, b) => a + b);
@@ -138,6 +152,7 @@ export class GameService {
     }
   }
 
+  /** clear game data after finishing game */
   private _clearDataAfterFinish(): void {
     this.gameData.user1.items = [0, 0, 0, 0, 0, 0];
     this.gameData.user2.items = [0, 0, 0, 0, 0, 0];

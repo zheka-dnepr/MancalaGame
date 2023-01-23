@@ -1,16 +1,22 @@
+<!-- text shown when it's the opposite player's turn -->
 <div class="text-section">
   <p *ngIf="gameData.user2.isActive">Opposite user Turn</p>
 </div>
 
+<!-- game field -->
 <section class="game-section" [ngClass]="{ 'game-section--disabled': gameData.isFinished}">
+  <!-- Opposite player's store -->
   <div class="user2-collected">{{ gameData.user2.collected }}</div>
+
   <div class="items-section">
+    <!-- Opposite player's holes -->
     <div class="items">
       <ng-container *ngFor="let item of gameData.user2.items; let i = index">
         <div class="item" [ngClass]="{'item--active': gameData.user2.isActive, 'item--hover': item > 0}"
              (click)="clickUserItem(i, gameData.user2, gameData.user1)"> {{ item }} </div>
       </ng-container>
     </div>
+    <!-- your holes -->
     <div class="items">
       <ng-container *ngFor="let item of gameData.user1.items; let i = index">
         <div class="item" [ngClass]="{
@@ -21,11 +27,14 @@
       </ng-container>
     </div>
   </div>
+  <!-- your store -->
   <div class="user1-collected">{{ gameData.user1.collected }}</div>
 </section>
 
 <div class="text-section">
+  <!-- the text of your turn is shown -->
   <p *ngIf="gameData.user1.isActive">Your Turn</p>
+  <!-- text displayed after the game is over -->
   <ng-template [ngIf]="gameData.isFinished">
     <p *ngIf="gameData.isWinner">You are winner</p>
     <p *ngIf="!gameData.isWinner">You are loser</p>
